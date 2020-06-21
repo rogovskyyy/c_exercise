@@ -1,60 +1,17 @@
-#include <iostream>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-
-using namespace std;
-
-/**
- * 
- * @author Bartosz Rogowski
- * @github rogovskyyy
- * Contact: barrog@st.amu.edu.pl
- * NOTE: Shunting yard algorithm
- * 
- */
-
-/**
- * 
- * @variable f[10];
- * @description list of dignits in order
- * 
-**/
+#include <time.h> 
+#include <math.h>
 
 const char f[10] = {'0','1','2','3','4','5','6','7','8','9'}; 
-
-/**
- * 
- * @variable g[6];
- * @description list of chars in order
- * 
-**/
-
 const char g[6] = {'+','-','*','/','(',')'};
-
-/**
- * 
- * @variable int r;
- * @param (int b, int t) - (bottom of range, top of range) 
- * @description generate random number
- * @return int
- * 
-**/
 
 int r(int b, int t)
 {
     return (rand() % (t - b + 1)) + b; 
 }
-
-/**
- * 
- * @variable void a;
- * @param (char *t, int s) - (reference to array, size of array) 
- * @description - generate math order of operations
- * @return - void
- * 
-**/
 
 void a(char *t, int s)
 {
@@ -85,78 +42,55 @@ void a(char *t, int s)
     t[s] = '\0';
 }
 
-/**
- * 
- * @variable void b;
- * @param (char *t, int s) - (reference to array, size of array) 
- * @description - read and handle math order of operations from TXT file
- * @return - void
- * 
-**/
-
-void b(char *t, int s)
+char* aa;
+char ab() { return *aa; }
+char ac() { return *aa++; }
+int b();
+int c()
 {
-    char temp[s];
-    int i = 0;
-    while(true)
+    int f = ac() - '0';
+    while (ab() >= '0' && ab() <= '9')
     {
-        if(t[1] != null)
-        {
-            if(t[i] == '(')
-            {
-                switch(t[i + 2])
-                {
-                    case "+":
-                        t[i] = (double) t[i + 1] + (double) t[i + 3];
-                        for(int j = i; j <= sizeof(t) - 5; j++)
-                        {
-                            t[j + 1] = t[j + 5];
-                        }   
-                        break;
-                    case "-":
-                        t[i] = (double) t[i + 1] - (double) t[i + 3];
-                        for(int j = i; j <= sizeof(t) - 5; j++)
-                        {
-                            t[j + 1] = t[j + 5];
-                        }
-                        break;
-                    case "*":
-                        t[i] = (double) t[i + 1] * (double) t[i + 3];
-                        for(int j = i; j <= sizeof(t) - 5; j++)
-                        {
-                            t[j + 1] = t[j + 5];
-                        }
-                        break;                           
-                    case "/":
-                        t[i] = (double) t[i + 1] / (double) t[i + 3];
-                        for(int j = i; j <= sizeof(t) - 5; j++)
-                        {
-                            t[j + 1] = t[j + 5];
-                        }
-                        break;                            
-                    default:
-                        break;
-                }
-            }
-
-            if(t[i] == "*" || t[i] == "/")
-            {
-                switch(t[i])
-                {
-                    case "*":
-
-                    case "/":
-                    
-                    default:
-                        break;
-                }
-            } 
-
-            }
-        }
-
-        i++;
+        f = 10*f + ac() - '0';
     }
+    return f;
+}
+
+int d()
+{
+    if (ab() >= '0' && ab() <= '9') { return c(); }
+    else if (ab() == '('){ ac(); int f = b(); ac(); return f; }
+    else if (ab() == '-') { ac(); return -d(); }
+    return 0;
+}
+
+int e()
+{
+    int f = d();
+    while (ab() == '*' || ab() == '/')
+    {
+        if (ac() == '*') { f *= d(); }
+        else { f /= d(); }  
+    }
+
+    return f;
+}
+
+int b()
+{
+    int f = e();
+    while (ab() == '+' || ab() == '-')
+    {
+        if (ac() == '+') { f += e(); }
+        else { f -= e();}
+    }
+    return f;
+}
+
+int init(char* args)
+{
+    aa = args;
+    return b();
 }
 
 int main()
@@ -165,7 +99,10 @@ int main()
     int c;
     FILE *f;
 
-    cout << "Enter array size: "; cin >> c;
+    printf("Podaj n > 0: ");
+    scanf("%d", &c);
+
+    printf("\nDlugosc ciagu znakow: %d \n", c);
 
     if(c % 2 == 0)
     {
@@ -174,25 +111,24 @@ int main()
 
     char t[c] = {0};
     a(t, c);
+
+    printf("Twoje wyrazenie matematyczne: %s\n", t);
     
-    //  Save data to file and close
-    f = fopen("data.txt", "w+");
+    f = fopen("dane.txt", "w+");
     fprintf(f, t);
     fclose(f);
 
-    //  Read data from file and close
-    f = fopen("data.txt", "r");
-    char buffor[512];
-
+    char u[c] = {0};
+    f = fopen("dane.txt", "r");
+    
     while(!feof(f))
     {
-        fread(buffor, sizeof(buffor), 1, f);
+        fread(u, sizeof(u), 1, f);
     }
 
     fclose(f);
 
-    char u[c] = {0};
-    b(u, c);
+    printf("Wynik dzialania: %d \n\n", init(u));
 
     return 0;
 }
